@@ -18,7 +18,7 @@
 package org.kududb.spark
 
 import org.apache.spark.rdd.RDD
-import org.kududb.client._
+import org.apache.kudu.client._
 
 import scala.reflect.ClassTag
 

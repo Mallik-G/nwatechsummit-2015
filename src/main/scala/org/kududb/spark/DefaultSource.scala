@@ -5,8 +5,8 @@ import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.sql.sources._
 import org.apache.spark.sql.types._
-import org.kududb.client.{RowResult}
-import org.kududb.{Schema, ColumnSchema, Type}
+import org.apache.kudu.client.{RowResult}
+import org.apache.kudu.{Schema, ColumnSchema, Type}
 
 import scala.collection.mutable
 
@@ -112,7 +112,7 @@ class KuduRelation (val tableName:String,
       else if (c.getType.equals(Type.FLOAT)) FloatType
       else if (c.getType.equals(Type.DOUBLE)) DoubleType
       else if (c.getType.equals(Type.STRING)) StringType
-      else if (c.getType.equals(Type.TIMESTAMP)) TimestampType
+      else if (c.getType.equals(Type.UNIXTIME_MICROS)) TimestampType
       else if (c.getType.equals(Type.BINARY)) BinaryType
       else throw new Throwable("Unsupported column type :" + c.getType)
 
@@ -183,7 +183,7 @@ class KuduRelation (val tableName:String,
     else if (columnType == Type.INT32) row.getInt(columnIndex)
     else if (columnType == Type.INT64) row.getLong(columnIndex)
     else if (columnType == Type.INT8) row.getByte(columnIndex)
-    else if (columnType == Type.TIMESTAMP) row.getLong(columnIndex)
+    else if (columnType == Type.UNIXTIME_MICROS) row.getLong(columnIndex)
     else if (columnType == Type.STRING) row.getString(columnIndex)
   }
 }

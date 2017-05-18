@@ -1,10 +1,14 @@
 package com.svds.kudumeetup
 
 import java.util
-
-import org.kududb.{Schema, Type, ColumnSchema}
-import org.kududb.ColumnSchema.ColumnSchemaBuilder
-import org.kududb.client.{PartialRow, CreateTableBuilder, KuduClient}
+import org.apache.kudu.ColumnSchema.ColumnSchemaBuilder
+import org.apache.kudu.client.KuduClient.KuduClientBuilder
+import org.apache.kudu.client.{CreateTableOptions, KuduClient, KuduTable}
+import org.apache.kudu.{Schema, Type}
+import org.apache.kudu.ColumnSchema
+import com.google.common.collect.ImmutableList
+import scala.collection.JavaConverters._
+import scala.collection.immutable.IndexedSeq
 
 object CreateMeetupLoadSummaryKuduTable {
   def main(args:Array[String]): Unit = {
@@ -17,6 +21,8 @@ object CreateMeetupLoadSummaryKuduTable {
     val tableName = args(1)
 
     val kuduClient = new KuduClient.KuduClientBuilder(kuduMaster).build()
+    val tableOptions = new CreateTableOptions().setRangePartitionColumns(List("time").asJava)
+      .setNumReplicas(3)
     val columnList = new util.ArrayList[ColumnSchema]()
 
     columnList.add(new ColumnSchemaBuilder("time", Type.INT64).key(true).build())
@@ -27,11 +33,11 @@ object CreateMeetupLoadSummaryKuduTable {
       println("Deleting Table")
       kuduClient.deleteTable(tableName)
     }
-    val createTableBuilder = new CreateTableBuilder
     println("Creating Table")
-    kuduClient.createTable(tableName, schema, createTableBuilder)
+    kuduClient.createTable(tableName, schema, tableOptions)
     println("Created Table")
     kuduClient.shutdown()
   }
 }
+
 

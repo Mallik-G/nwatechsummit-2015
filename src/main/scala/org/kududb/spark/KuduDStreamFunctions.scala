@@ -17,7 +17,7 @@
 package org.kududb.spark
 
 import org.apache.spark.streaming.dstream.DStream
-import org.kududb.client._
+import org.apache.kudu.client._
 
 import scala.reflect.ClassTag
 

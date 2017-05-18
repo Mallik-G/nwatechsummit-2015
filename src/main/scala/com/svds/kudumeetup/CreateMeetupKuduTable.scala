@@ -1,10 +1,11 @@
 package com.svds.kudumeetup
 
 import java.util
-
-import org.kududb.{Schema, Type, ColumnSchema}
-import org.kududb.ColumnSchema.ColumnSchemaBuilder
-import org.kududb.client.{PartialRow, CreateTableBuilder, KuduClient}
+import org.apache.kudu.ColumnSchema.ColumnSchemaBuilder
+import org.apache.kudu.client.{CreateTableOptions, KuduClient, KuduTable}
+import org.apache.kudu.{Schema, Type}
+import org.apache.kudu.ColumnSchema
+import scala.collection.JavaConverters._
 
 object CreateMeetupKuduTable {
   def main(args:Array[String]): Unit = {
@@ -12,11 +13,10 @@ object CreateMeetupKuduTable {
       println("{kuduMaster} {tableName}")
       return
     }
-
     val kuduMaster = args(0)
     val tableName = args(1)
-
     val kuduClient = new KuduClient.KuduClientBuilder(kuduMaster).build()
+    val tableOptions = new CreateTableOptions().setRangePartitionColumns(List("event_id").asJava).setNumReplicas(3)
     val columnList = new util.ArrayList[ColumnSchema]()
 
     columnList.add(new ColumnSchemaBuilder("event_id", Type.STRING).key(true).build())
@@ -44,9 +44,9 @@ object CreateMeetupKuduTable {
       println("Deleting Table")
       kuduClient.deleteTable(tableName)
     }
-    val createTableBuilder = new CreateTableBuilder
+
     println("Creating Table")
-    kuduClient.createTable(tableName, schema, createTableBuilder)
+    kuduClient.createTable(tableName, schema, tableOptions)
     println("Created Table")
     kuduClient.shutdown()
   }

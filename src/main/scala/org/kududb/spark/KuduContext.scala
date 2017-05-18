@@ -20,13 +20,16 @@ package org.kududb.spark
 import org.apache.hadoop.conf.Configuration
 import org.apache.hadoop.io.NullWritable
 import org.apache.spark.rdd.RDD
-import org.kududb.client._
-import org.kududb.mapreduce.KuduTableInputFormat
+import org.apache.kudu.client._
+
 import scala.collection.mutable
 import scala.reflect.ClassTag
 import org.apache.spark.{Logging, SparkContext}
 import org.apache.spark.streaming.dstream.DStream
 import java.io._
+
+import org.apache.kudu.mapreduce.KuduTableInputFormat
+
 
 /**
   * HBaseContext is a façade for HBase operations

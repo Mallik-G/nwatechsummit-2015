@@ -26,14 +26,18 @@ Build:
 ```
 cd ~/nwatechsummit-2015
 sbt package
+sbt assembly
+
+Remove bad manifest entry
+zip -d target/scala-2.10/kudu-meetup-assembly-1.0.jar META-INF/*.RSA META-INF/*.DSA META-INF/*.SF
 ```
 
-Download Spark 1.5.1 for Hadoop 2.6+ (http://spark.apache.org/downloads.html)
+Download Spark 1.6.0 for Hadoop 2.6+ (http://spark.apache.org/downloads.html)
 From link (may need refreshed) and expand into home dir:
 ```
 cd ~
-wget http://d3kbcqa49mib13.cloudfront.net/spark-1.5.1-bin-hadoop2.6.tgz
-tar xvf spark-1.5.1-bin-hadoop2.6.tgz
+wget https://d3kbcqa49mib13.cloudfront.net/spark-1.6.0-bin-hadoop2.6.tgz
+tar xvf spark-1.6.0-bin-hadoop2.6.tgz
 ```
 
 Create Kudu Tables:
