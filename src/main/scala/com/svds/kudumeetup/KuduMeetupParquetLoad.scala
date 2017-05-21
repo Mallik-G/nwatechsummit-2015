@@ -15,7 +15,7 @@ object KuduMeetupParquetLoad {
     val sqlContext = new SQLContext(sc)
     sqlContext.setConf("spark.sql.parquet.compression.codec","snappy")
     val meetup = sqlContext.jsonFile(inputFile)
-    meetup.saveAsParquetFile(parquetPath)
+    meetup.toDF().write.parquet(parquetPath)
   }
 }
 

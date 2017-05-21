@@ -5,11 +5,17 @@ import org.apache.kudu.client.PartialRow
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.streaming.dstream.DStream
-import org.apache.spark.streaming.kafka.KafkaUtils
 import org.apache.spark.streaming.{Seconds, StreamingContext}
 import org.apache.kudu.client.SessionConfiguration.FlushMode
 import org.kududb.spark.KuduContext
 import org.kududb.spark.KuduDStreamFunctions.GenericKuduDStreamFunctions
+
+import org.apache.kafka.clients.consumer.ConsumerRecord
+import org.apache.kafka.common.serialization.StringDeserializer
+import org.apache.spark.streaming.kafka010._
+import org.apache.spark.streaming.kafka010.LocationStrategies.PreferConsistent
+import org.apache.spark.streaming.kafka010.ConsumerStrategies.Subscribe
+
 
 import scala.util.Try
 
@@ -17,11 +23,21 @@ object KuduMeetup {
   def loadDataFromKafka(topics: String,
                         brokerList: String,
                         ssc: StreamingContext): DStream[String] = {
+    val kafkaParams = Map[String, Object](
+      "bootstrap.servers" -> brokerList,
+      "key.deserializer" -> classOf[StringDeserializer],
+      "value.deserializer" -> classOf[StringDeserializer],
+      "group.id" -> "meetups",
+      "auto.offset.reset" -> "latest",
+      "enable.auto.commit" -> (false: java.lang.Boolean)
+    )
     val topicsSet = topics.split(",").toSet
-    val kafkaParams = Map[String, String]("metadata.broker.list" -> brokerList)
-    val messages = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
-      ssc, kafkaParams, topicsSet)
-    messages.map(_._2)
+    val messages = KafkaUtils.createDirectStream[String, String](
+      ssc,
+      PreferConsistent,
+      Subscribe[String, String](topicsSet, kafkaParams)
+    )
+    messages.map(record => record.value)
   }
 
   def setCol(kuduRow: PartialRow, sparkRow: => Row, getField: String, setField: String = null): Unit = {
