@@ -1,4 +1,4 @@
-spark-submit \
+~/nwatechsummit-2015/spark-2.1.1-bin-hadoop2.7/bin/spark-submit  \
 --repositories https://repository.cloudera.com/artifactory/repo/ \
 --packages "org.apache.kudu:kudu-spark_2.10:1.3.0-SNAPSHOT" \
 --class com.svds.kudumeetup.CreateMeetupLoadSummaryKuduTable \
