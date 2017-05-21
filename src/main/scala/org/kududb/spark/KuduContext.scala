@@ -24,7 +24,7 @@ import org.apache.kudu.client._
 
 import scala.collection.mutable
 import scala.reflect.ClassTag
-import org.apache.spark.{Logging, SparkContext}
+import org.apache.spark.SparkContext
 import org.apache.spark.streaming.dstream.DStream
 import java.io._
 
@@ -41,7 +41,7 @@ import org.apache.kudu.mapreduce.KuduTableInputFormat
  */
 class KuduContext(@transient sc: SparkContext,
                    @transient kuduMaster: String)
-  extends Serializable with Logging {
+  extends Serializable  {
 
   val broadcastedKuduMaster = sc.broadcast(kuduMaster)
 

@@ -1,6 +1,5 @@
 package org.kududb.spark
 
-import org.apache.spark.Logging
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.{Row, SQLContext}
 import org.apache.spark.sql.sources._
@@ -57,7 +56,7 @@ class DefaultSource extends RelationProvider {
 class KuduRelation (val tableName:String,
                      val kuduMaster: String) (
   @transient val sqlContext:SQLContext)
-  extends BaseRelation with PrunedFilteredScan with Logging with Serializable {
+  extends BaseRelation with PrunedFilteredScan with Serializable {
 
   //create or get latest HBaseContext
   @transient var kuduContext = new KuduContext(sqlContext.sparkContext, kuduMaster)
